@@ -55,24 +55,24 @@ Later the connectivity matrix should also be adapted by some learning rule. But 
 
 
 # Version 0.1 (24.10.2023)
-In a first implementation of the project I had a lot of fun with getting into object oriented programming.
-For the world there is now a world class, that keeps track of all the constant stuff in the simulation. For now this is the position of shelter and the position of obstacles as well as some basic paramteres like worldsize.
+In a first implementation of the project I had a lot of fun with getting into object oriented programming. The code is separated into three objects and a main function that runs the simulation.
 
-Additionally there is a creature object that defines the creatures that interact with the world. So far they are really basic.
-They have a direction and each timestep they move one step into this direction if it is possible (no creature or obstacle in the way).
+## The world object
+For the world there is now a world class, that keeps track of all the constant stuff in the simulation. For now this is the position of shelter and the position of obstacles as well as some basic paramteres like worldsize. The worldclass also knows about the initial creature population from its initialization and keeps track of the simulated days and creatures. The simulation function runs the simulation of 'n_day' days and keeps the results in the objects history. The world is the global object with which the user interacts to start the simulation and look at the results. All global plotting functions should also be funneled through the world object in the future.
 
+
+# the creature object
+Additionally there is a creature object that defines the creatures that interact with the world. So far they are really basic. They have a direction and each timestep they move one step into this direction if it is possible (no creature or obstacle in the way). The initial creature population is also initialized by the user. In future, everything that should be related to the behavior of the creatures (neural net, senses, cost functions, learning, etc.) should be handled within this class.
+
+## The day object
 The third object is a day. A day takes a world and a list of creatures and runs the timesteps for these creatures in this world.
-It also stores the global creature position matrix per timestep in its creature history. The separation of world and day was done mainly for understandability. Everything that is constant over the whole simulation should be part of the world. Everything that is changing with interactions over the course of a day is stored in the history of the day object. 
+It also stores the global creature position matrix per timestep in its creature history. The separation of world and day was done mainly for understandability. Everything that affects the whole simulation should be part of the world. Everything that is changing with interactions over the course of a day is stored in the history of the day object. 
 
-Beyond this objects there is the simulation function, which creates an initial world and an initial population of creatures and runs the whole simulation.
-TODO: This could maybe become part of the world class to run the simulation of the world. This way the world knows about days and creatures in the world and the only thing to handle in the end is the world object.
-
-The parameters and simulation call are done in the main script.
-TODO: Create yaml config file that handles the parameters.
-
+## The main and config
+The config file gives the user easy access to the simulation parameters.
+These are then parsed as a dictionary to the main script which initializes some starting population of creatures and an empty world and runs the simulation.
 
 ## Todos for version 0.2
-- [ ] Handle TODOs above
 - [ ] Create plotter for a finished simulating world
 
 ## Next step for version 0.3
