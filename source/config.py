@@ -8,13 +8,13 @@ import numpy as np
 seed                    = 1
 
 # (y,x) size of the world
-worldsize               = (100,100)
+worldsize               = (100,120)
 
 # Initial population size of creatures
 n_creatures             = 100
 
 # Number of days in the simulation
-n_days                  = 100
+n_days                  = 5
 
 # Number of timesteps in a day
 n_timesteps             = 100
@@ -25,7 +25,7 @@ obstacle_matrix         = np.zeros(shape=worldsize)
 
 # Defining the right most 20 bins as shelter. 
 shelter_matrix          = np.zeros(shape=worldsize)
-shelter_matrix[:, 20:]  = np.ones(shape=shelter_matrix[:, 20:].shape)
+shelter_matrix[:, 70:]  = np.ones(shape=shelter_matrix[:, 70:].shape)
 
 
 # Gathering of the parameters into a diticionary to pass along

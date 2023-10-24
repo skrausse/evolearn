@@ -2,6 +2,8 @@ from day import day
 from creature import creature
 import warnings
 import numpy as np
+from tqdm import tqdm
+import datetime
 
 class world():
     
@@ -19,6 +21,9 @@ class world():
         self.simcreatures = initial_creatures
         self.n_timesteps = n_timesteps
 
+        # create unique identifier for each world based on the creation time
+        now = datetime.datetime.now()
+        self.world_id = str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond)
         
     
     #-----------------------------------------------------------
@@ -53,23 +58,29 @@ class world():
     #--------------------------------------------------------------------------------------------------------
 
     def creature_inheritence(self, creatures):
-        # Only creatures at shelter survive
+        # calculate number of creatures to reproduce the same number
+        n_creatures = len(creatures)
+
+        # Only creatures at shelter survive and pass on their direction and reproduction rate value
         selection_index = np.array([c.at_shelter(self.shelter) for c in creatures])
         creature_directions = np.array([c.direction for c in creatures])
         creature_reproduction_chances = np.array([c.reproduction_chance for c in creatures])
 
         remaining_directions = creature_directions[selection_index]
         remaining_reproduction_chances = creature_reproduction_chances[selection_index]
+        
+        new_directions = np.random.choice(remaining_directions, n_creatures, replace=True)
+        new_reproduction_chances = np.random.choice(remaining_reproduction_chances, n_creatures, replace=True)
 
         # Initialize new random start position for the remaining cretures
         possible_positions = np.array([(y,x) for y in range(self.size[0]) for x in range(self.size[1])])
-        random_indices = np.random.choice(range(len(possible_positions)), size=len(remaining_directions), replace=False)
-        start_positions = possible_positions[random_indices]
+        random_indices = np.random.choice(range(len(possible_positions)), size=n_creatures, replace=False)
+        new_positions = possible_positions[random_indices]
 
         # Initialize new population
         new_creatures = [creature(position=p,
                                 reproduction_chance=r,
-                                direction=d) for p, r, d in zip(start_positions, remaining_reproduction_chances, remaining_directions)]
+                                direction=d) for p, r, d in zip(new_positions, new_reproduction_chances, new_directions)]
 
         return new_creatures
     
@@ -79,7 +90,11 @@ class world():
         if self.day_counter != len(self.simulated_days):
             raise ValueError('The number of simulated days does not match the internal day counter. This is an internal error, sorry for that.')
         
-        for day_idx in range(self.day_counter, self.n_days, 1):
+        for day_idx in tqdm(range(self.day_counter, self.n_days, 1), 
+                            desc=f'Simulating {np.max([0, self.n_days-self.day_counter])} new days ({self.day_counter} already simulated)',
+                            total=np.max([0, self.n_days-self.day_counter]),
+                            leave=None):
+            
             # Initialize a new day
             simday = day(world=self,
                         creatures=self.simcreatures,
@@ -95,7 +110,7 @@ class world():
             self.day_counter += 1
             
             # Run inheritence rule to create creature population of the next day
-            self.simcreatures = self.creature_inheritence(simday.creatures)
+            self.simcreatures = self.creature_inheritence(creatures=simday.creatures)
 
             # Check whether there are creatures remaining, if not end the simulation
             if len(self.simcreatures) == 0:
