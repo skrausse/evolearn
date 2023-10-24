@@ -1,7 +1,6 @@
 from world import world
 from creature import creature
 import numpy as np
-from simulation import run_simulation
 
 def get_params():
     worldsize                 = (100,100)
@@ -42,17 +41,19 @@ def get_creature_initializations(n_creatures, worldsize):
 if __name__=='__main__':
     params = get_params()
     np.random.seed(params['seed'])
-    # Initialize world and creatures for the first time
-    simworld = world(size=params['worldsize'],
-                     obstacles=params['obstacle_matrix'],
-                     shelter=params['shelter_matrix'])
-
     # Initialize first creature population
     initial_creatures = [creature(position=p,
                                   reproduction_chance=r,
                                   direction=d) for p, r, d in zip(*get_creature_initializations(params['n_creatures'], params['worldsize']))]
     
-    simdays, simcreatures = run_simulation(world=simworld,
-                                           initial_creatures=initial_creatures,
-                                           n_days=params['n_days'],
-                                           n_timesteps=params['n_timesteps'])
+    
+    simworld = world(size=params['worldsize'],
+                     obstacles=params['obstacle_matrix'],
+                     shelter=params['shelter_matrix'],
+                     initial_creatures=initial_creatures,
+                     n_days=params['n_days'],
+                     n_timesteps=params['n_timesteps'])
+    
+    simworld.run_simulation()
+
+    breakpoint()
