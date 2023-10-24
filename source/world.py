@@ -92,7 +92,8 @@ class world():
             # Store results of the day
             self.simulated_days.append(simday)
             self.simulated_creatures.append(simday.creatures)
-
+            self.day_counter += 1
+            
             # Run inheritence rule to create creature population of the next day
             self.simcreatures = self.creature_inheritence(simday.creatures)
 
