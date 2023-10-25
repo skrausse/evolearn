@@ -1,15 +1,14 @@
 from world import world
 from creature import creature
 from config import params
-
+from utils import generate_random_starting_positions
 import numpy as np
 
 #--------------------------------------------------------------------------------------------------------
 
-def creature_initializations(n_creatures, worldsize):
-    possible_positions = np.array([(y,x) for y in range(worldsize[0]) for x in range(worldsize[1])])
-    random_indices = np.random.choice(range(len(possible_positions)), size=n_creatures, replace=False)
-    start_positions = possible_positions[random_indices]
+def creature_initializations(n_creatures, worldsize, obstacles):
+    # Generate random start positions for all creatures
+    start_positions = generate_random_starting_positions(worldsize=worldsize, obstacles=obstacles, n_creatures=n_creatures)
 
     # reproduction chances are so far only a dummy variable and are fixed to be 1.
     start_reproduction_chances = np.ones(shape=n_creatures)
@@ -30,7 +29,7 @@ if __name__=='__main__':
     # Initialize first creature population
     initial_creatures = [creature(position=p,
                                   reproduction_chance=r,
-                                  direction=d) for p, r, d in zip(*creature_initializations(params['n_creatures'], params['worldsize']))]
+                                  direction=d) for p, r, d in zip(*creature_initializations(params['n_creatures'], params['worldsize'], params['obstacle_matrix']))]
     
     # Initialize the simulation world
     simworld = world(size=params['worldsize'],

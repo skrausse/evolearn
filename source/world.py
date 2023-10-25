@@ -4,6 +4,7 @@ import warnings
 import numpy as np
 from tqdm import tqdm
 import datetime
+from utils import generate_random_starting_positions
 
 class world():
     
@@ -60,30 +61,24 @@ class world():
     #--------------------------------------------------------------------------------------------------------
 
     def creature_inheritence(self, creatures):
-        # calculate number of creatures to reproduce the same number
-        n_creatures = len(creatures)
-
-        # Only creatures at shelter survive and pass on their direction and reproduction rate value
+        # Create array index to select only surviving creatures
         selection_index = np.array([c.at_shelter(self.shelter) for c in creatures])
-        creature_directions = np.array([c.direction for c in creatures])
-        creature_reproduction_chances = np.array([c.reproduction_chance for c in creatures])
 
-        remaining_directions = creature_directions[selection_index]
-        remaining_reproduction_chances = creature_reproduction_chances[selection_index]
+        # Select surviving directions and randomly pick from those for the next generation
+        remaining_directions = np.array([c.direction for c in creatures])[selection_index]
+        new_directions = np.random.choice(remaining_directions, len(creatures), replace=True)
         
-        new_directions = np.random.choice(remaining_directions, n_creatures, replace=True)
-        new_reproduction_chances = np.random.choice(remaining_reproduction_chances, n_creatures, replace=True)
+        # Select surviving reproduction_chances and randomly pick from those for the next generation
+        remaining_reproduction_chances = np.array([c.reproduction_chance for c in creatures])[selection_index]
+        new_reproduction_chances = np.random.choice(remaining_reproduction_chances, len(creatures), replace=True)
 
         # Initialize new random start position for the remaining cretures
-        possible_positions = np.array([(y,x) for y in range(self.size[0]) for x in range(self.size[1])])
-        random_indices = np.random.choice(range(len(possible_positions)), size=n_creatures, replace=False)
-        new_positions = possible_positions[random_indices]
+        new_positions = generate_random_starting_positions(worldsize=self.size, obstacles=self.obstacles, n_creatures=len(creatures))
 
         # Initialize new population
         new_creatures = [creature(position=p,
                                 reproduction_chance=r,
                                 direction=d) for p, r, d in zip(new_positions, new_reproduction_chances, new_directions)]
-
         return new_creatures
     
     #-----------------------------------------------------------
