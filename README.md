@@ -73,7 +73,7 @@ The config file gives the user easy access to the simulation parameters.
 These are then parsed as a dictionary to the main script which initializes some starting population of creatures and an empty world and runs the simulation.
 
 ## Todos for version 0.2
-- [ ] Create plotter for a finished simulating world
+- [x] Create plotter for a finished simulating world
 
 ## Next step for version 0.3
 - [ ] Enhance the creature abilities
@@ -84,3 +84,35 @@ These are then parsed as a dictionary to the main script which initializes some 
 - [ ] Introduce food to increase reproduction chance
 - [ ] Introduce learning to the network (either by optimizing some cost function like energy or by unsupervised learning)
 
+---
+
+# Version 0.2: Introducing animations
+After quite a fight with matplotlib animations and ffmpeg I finally managed to create animations for each day.
+Running the 'animate_days()' function of the world will create .mp4 files for each day displaying the behavior of the creature in the world.
+Each item of the world and day is handled as an imshow overlay. This will hopefully make it easy in the future to add features to the world and the animation.
+
+With this release, we finished the build of the basic simulation environment. The next steps are to make the world and the creatures in the world more interesting.
+As of now, the creatures are merely running in one fixed direction or are standing still for the whole day. The best strategy does evolve over a few days, but this can really not be called interesting behavior. So next I want the creature to be able to adapt their behavior based on some input they get. The goal for release 0.3 therefore will be to have creatures that have some network-like structure that recieves input (position in the world, if they are currently at shelter, items on neighboring fields, ...). The output of the network should then be some behavior command (move forward, turn left, turn west, stand still, ...). 
+For this part I must give large credit to the author of this project https://www.youtube.com/watch?v=N3tRFayqVtk, davidrandallmiller. He proposed a very cool scheme of encoding such networks using a hexadecimal code. This code can be thought of as a hex-DNA of each creature and can therefore be easily be inherited and mutated after each day. Mutation will be a key ingredient for this next step to be successful. Without mutations we will only ever find the best strategy that was already available from the initialization of the creatures and not optimize the strategy even further. I am planning to adopt a similar gene encoding procedure for my creatures.
+
+
+## Next step for version 0.3
+- [ ] Enhance the creature abilities
+    - Design input and output neurons
+	- Create a genome code for all possible networks
+	- implement network class that takes a creatures genome and state as an input and produces some output based on that.
+	- Hook up networks to creature decisions
+	- Inherit creature genomes after a day
+	- Create genome mutations while inheritence
+	- Create a visualization for all different network strategies present based on the creatuers genomes.
+
+- [ ] Some utility stuff to make our lives easier
+	- Saving simulated worlds
+	- Loading simulated worlds
+	- Detecting the level of simulation and resuming simulation and animation after detecting
+
+## outlook for version 0.x
+- [ ] Advanced reproduction logic (energy function that is influenced by food, speed, ... and determines the reproduction chance)
+- [ ] Introduce some way of communication between creatures (pheromone emission and sensing based on some world )
+- [ ] Introduce learning to the network (either by optimizing some cost function like energy or by unsupervised learning)
+- [ ] Introduce different creature types (like predetor-prey behavior). Maybe this could even be implemented by only letting the creatures fight and sometimes get a reward from it. This could then evolve into different types of creatures with different strategies. 
