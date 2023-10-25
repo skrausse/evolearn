@@ -3,21 +3,6 @@ class creature():
         self.set_position(position)
         self.set_reproduction_chance(reproduction_chance)
         self.set_direction(direction)
-
-    #-----------------------------------------------------------
-    
-    def get_position(self):
-        return (self.position)
-    
-    #-----------------------------------------------------------
-    
-    def get_reproduction_chance(self):
-        return self.reproduction_chance
-    
-    #-----------------------------------------------------------
-    
-    def get_direction(self):
-        return self.direction
     
     #-----------------------------------------------------------
     
@@ -32,8 +17,8 @@ class creature():
     #-----------------------------------------------------------
 
     def set_direction(self, direction):
-        if direction not in ['up', 'down', 'left', 'right']:
-            raise ValueError(f'Unknown direction provided. Expected element of ["up","down", "left", "right"], but got "{direction}".')
+        if direction not in ['up', 'down', 'left', 'right', 'None']:
+            raise ValueError(f'Unknown direction provided. Expected element of ["up","down", "left", "right", "None"], but got "{direction}".')
         
         self.direction = direction
     
@@ -50,10 +35,12 @@ class creature():
                 new_position = [self.position[0], self.position[1] - 1]
             case 'right':
                 new_position = [self.position[0], self.position[1] + 1]
+            case 'None':
+                pass
             case 'other':
-                raise ValueError(f'Unknown direction provided. Expected element of ["up","down", "left", "right"], but got "{self.direction}".')
+                raise ValueError(f'Unknown direction provided. Expected element of ["up","down", "left", "right", "None"], but got "{self.direction}".')
         
-        if self._valid_creature_move(new_position, creature_positions, obstacles, worldsize):
+        if ((self.direction != 'None') and (self._valid_creature_move(new_position, creature_positions, obstacles, worldsize))):
             self.set_position(new_position)
 
     #-----------------------------------------------------------

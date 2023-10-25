@@ -25,9 +25,11 @@ obstacle_matrix         = np.zeros(shape=worldsize)
 
 # Defining the right most 20 bins as shelter. 
 shelter_matrix          = np.zeros(shape=worldsize)
-shelter_matrix[:, 70:]  = np.ones(shape=shelter_matrix[:, 70:].shape)
+shelter_matrix[80:, :]  = np.ones(shape=shelter_matrix[80:, :].shape)
+shelter_matrix[:, :10]  = np.ones(shape=shelter_matrix[:, :10].shape)
 
-
+# Storing output location
+output_path = 'C:\\Users\\sven_\\OneDrive\\Dokumente\\projects\\evolearn\\output'
 # Gathering of the parameters into a diticionary to pass along
 params = {
         'seed': seed,
@@ -37,4 +39,5 @@ params = {
         'worldsize': worldsize,
         'obstacle_matrix': obstacle_matrix,
         'shelter_matrix': shelter_matrix,
+        'output_path': output_path
     }

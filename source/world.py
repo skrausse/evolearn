@@ -7,7 +7,7 @@ import datetime
 
 class world():
     
-    def __init__(self, size, obstacles, shelter, initial_creatures, n_days, n_timesteps):     
+    def __init__(self, size, obstacles, shelter, initial_creatures, n_days, n_timesteps, world_id=None):     
         # Internal variables that need no initialization.
         self.simulated_days = []
         self.simulated_creatures = []
@@ -22,9 +22,11 @@ class world():
         self.n_timesteps = n_timesteps
 
         # create unique identifier for each world based on the creation time
-        now = datetime.datetime.now()
-        self.world_id = str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond)
-        
+        if world_id is None:
+            now = datetime.datetime.now()
+            self.world_id = str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond)
+        else:
+            self.world_id = str(world_id)
     
     #-----------------------------------------------------------
     
@@ -116,3 +118,13 @@ class world():
             if len(self.simcreatures) == 0:
                 warnings.warn(f'No creatures remaining after {day_idx+1}/{self.n_days} days. Simulation is therefore cut short.')
                 break
+
+    #-----------------------------------------------------------
+
+    def plot_days(self, savedir='./', fps=25, dpi=100, scale=10):
+        for day_index, day in tqdm(enumerate(self.simulated_days),
+                                   desc=f'Creating animation for {len(self.simulated_days)} days.',
+                                   total=len(self.simulated_days),
+                                   leave=None):
+           
+           day.plot_day(day_index, savedir=savedir, fps=fps, dpi=dpi, scale=scale)

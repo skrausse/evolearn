@@ -1,5 +1,8 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import os
+import warnings
 
 class day():
     def __init__(self, world, creatures, timesteps):
@@ -12,35 +15,6 @@ class day():
         self.creature_history = np.empty(shape=(self.timesteps + 1, self.world.size[0], self.world.size[1]))
         self.creature_history.fill(np.nan)
         self.creature_history[0,:,:] = self.creature_positions
-    #-----------------------------------------------------------
-    
-    def get_creatures(self):
-        return self.creatures
-    
-    #-----------------------------------------------------------
-    
-    def get_creature_positions(self):
-        return self.creature_positions
-    
-    #-----------------------------------------------------------
-    
-    def get_obstacles(self):
-        return self.world.obstacles
-    
-    #-----------------------------------------------------------
-    
-    def get_shelter(self):
-        return self.world.shelter
-    
-    #-----------------------------------------------------------
-    
-    def get_worldsize(self):
-        return self.world.size
-    
-    #-----------------------------------------------------------
-    
-    def get_creature_history(self):
-        return self.creature_history
 
     #-----------------------------------------------------------
     
@@ -71,3 +45,45 @@ class day():
             creature.update_creature(self.creature_positions, self.world.obstacles, self.world.size)
             self.update_creature_position(old_position, creature.position)
         self.creature_history[t+1,:,:] = self.creature_positions
+
+    #-------------------------------------------------------------
+
+    def plot_day(self, day_index, savedir, fps, dpi, scale):
+        if os.path.exists(f'{savedir}/day_{day_index}.mp4'):
+            warnings.warn('Animation for this day has has already been created and will therefore be skipped.')
+            return None
+        elif not os.path.exists(f'{savedir}'):
+            os.mkdir(f'{savedir}')
+
+        # create a colormap object
+        cmap_shelter = plt.get_cmap('Greens')
+        cmap_shelter.set_under((0,0,0,0))
+
+        cmap_obstacles = plt.get_cmap('Reds')
+        cmap_obstacles.set_under((0,0,0,0))
+
+        cmap_creatures = plt.get_cmap('Greys')
+        cmap_creatures.set_under((0,0,0,0))
+
+        aspect_ratio = self.world.size[0]/self.world.size[1]
+        fig, ax = plt.subplots()#figsize=(scale,scale*aspect_ratio), dpi=dpi)
+
+        frames = []
+        for history in self.creature_history:
+            ax.set_ylim((-1,self.world.size[0]+1))
+            ax.set_xlim((-1,self.world.size[1]+1))
+            ax.axis('off')
+            ax.set_title(f'Day {day_index}')
+            
+            img1 = ax.imshow(self.world.shelter, cmap=cmap_shelter, vmin=0.1, vmax=1, alpha=0.5, zorder=-5, animated=True)
+            img2 = ax.imshow(self.world.obstacles, cmap=cmap_obstacles, vmin=0.1, vmax=1, alpha=0.5, zorder=-4, animated=True)
+            img3 = ax.imshow(history, cmap=cmap_creatures, vmin=0.1, vmax=1, alpha=1, zorder=5, animated=True)
+            frames.append([img1, img2, img3])
+
+        ani = animation.ArtistAnimation(fig, 
+                                        frames, 
+                                        blit=True, 
+                                        interval=1000/fps, 
+                                        repeat=False)
+
+        ani.save(f'{savedir}\\day_{day_index}.mp4') 
