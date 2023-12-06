@@ -116,3 +116,11 @@ For this part I must give large credit to the author of this project https://www
 - [ ] Introduce some way of communication between creatures (pheromone emission and sensing based on some world )
 - [ ] Introduce learning to the network (either by optimizing some cost function like energy or by unsupervised learning)
 - [ ] Introduce different creature types (like predetor-prey behavior). Maybe this could even be implemented by only letting the creatures fight and sometimes get a reward from it. This could then evolve into different types of creatures with different strategies. 
+
+# Version 0.2.1 - Starting to work on brains (28.10.2023)
+To get towards version 0.3.0 the next step is to create brains for the creatures. The brains should be implemented as spiking networks. 
+As a first iteration I will just mean by that, that we have a synaptic weight matrix and a binary vector of each time step, where the neuron state is encoded.
+A one encodes a spike in the timestep. The activation function therefore also only consists of a step function. The weights are normalized to [-1,1] so that we may have inhibitory and excitatory synapses. 
+TODO: Maybe I need to scale up the range to allow single neurons to have more impact.
+The list of sensory neurons so far can also be found in the brain class. However the implementation is not done yet and nothing is hooked up to the creature itself.
+In future I plan to let the creature only move relative to some direction in which they are facing and they have to turn to change the possible move direction.
